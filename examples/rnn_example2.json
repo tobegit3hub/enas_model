@@ -1,0 +1,64 @@
+{
+  "cell_type": "rnn",
+  "nodes": [
+    {
+      "index": 0,
+      "activation_function": "tanh"
+    },
+    {
+      "index": 1,
+      "previous_index": 0,
+      "activation_function": "tanh"
+    },
+    {
+      "index": 2,
+      "previous_index": 1,
+      "activation_function": "relu"
+    },
+    {
+      "index": 3,
+      "previous_index": 1,
+      "activation_function": "relu"
+    },
+    {
+      "index": 4,
+      "previous_index": 1,
+      "activation_function": "tanh"
+    },
+    {
+      "index": 5,
+      "previous_index": 1,
+      "activation_function": "tanh"
+    },
+    {
+      "index": 6,
+      "previous_index": 1,
+      "activation_function": "relu"
+    },
+    {
+      "index": 7,
+      "previous_index": 1,
+      "activation_function": "tanh"
+    },
+    {
+      "index": 8,
+      "previous_index": 1,
+      "activation_function": "relu"
+    },
+    {
+      "index": 9,
+      "previous_index": 1,
+      "activation_function": "relu"
+    },
+    {
+      "index": 10,
+      "previous_index": 1,
+      "activation_function": "relu"
+    },
+    {
+      "index": 11,
+      "previous_index": 1,
+      "activation_function": "relu"
+    }
+  ]
+}
