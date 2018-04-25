@@ -31,6 +31,9 @@ class RnnNode(EnasNode):
         self.index, self.previous_index, self.activation_function)
     return instance_string
 
+  def __repr__(self):
+    return self.__str__()
+
 
 class RnnModel(EnasModel):
   def __init__(self):
@@ -38,24 +41,43 @@ class RnnModel(EnasModel):
     self.nodes = []
 
   @classmethod
-  def from_json(cls, json):
-    pass
+  def load_from_json(cls, json_file_path):
+    model_dict = json.load(open(json_file_path, "r"))
+
+    cell_type = model_dict["cell_type"]
+    nodes_dict = model_dict["nodes"]
+
+    rnn_model = RnnModel()
+
+    for node_dict in nodes_dict:
+      index = node_dict.get("index", None)
+      previous_index = node_dict.get("previous_index", None)
+      activation_function = node_dict.get("activation_function", None)
+      rnn_node = RnnNode(index, previous_index, activation_function)
+      rnn_model.add_node(rnn_node)
+
+    return rnn_model
 
   def __str__(self):
     instance_string = "nodes: {}".format(self.nodes)
     return instance_string
 
+  def __repr__(self):
+    return self.__str__()
+
   def draw_graph(self):
-    dot = Digraph()
+    dot = Digraph(format="png")
 
     # Add nodes
     dot.node("Input0", "x[t]")
-    dot.node("Input1", "h[t-1]")
-    dot.node("Output0", "avg")
-    dot.node("Output1", "h[t]")
+    dot.node("Input1", "h[t-1]", color='lightblue', style='filled')
+    dot.node("Output0", "avg", color="green", style='filled')
+    dot.node("Output1", "h[t]", color="lightblue", style='filled')
 
     for node in self.nodes:
-      dot.node(str(node.index), str(node.index))
+      dot.node(
+          str(node.index), "{}: {}".format(node.index,
+                                           node.activation_function))
 
     # Add edges
     total_node_number = len(self.nodes)
@@ -85,20 +107,7 @@ def main():
   print("Start")
 
   json_file_path = "./examples/rnn_example.json"
-  model_dict = json.load(open(json_file_path, "r"))
-
-  cell_type = model_dict["cell_type"]
-  nodes_dict = model_dict["nodes"]
-
-  rnn_model = RnnModel()
-
-  for node_dict in nodes_dict:
-    index = node_dict.get("index", None)
-    previous_index = node_dict.get("previous_index", None)
-    activation_function = node_dict.get("activation_function", None)
-    rnn_node = RnnNode(index, previous_index, activation_function)
-    rnn_model.add_node(rnn_node)
-
+  rnn_model = RnnModel.load_from_json(json_file_path)
   rnn_model.draw_graph()
 
 
