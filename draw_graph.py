@@ -7,9 +7,9 @@ from cell import cnn_micro_cell
 
 
 def main():
-  #draw_dnn_cell()
-  #draw_rnn_cell()
-  #draw_cnn_marco_cell()
+  draw_dnn_cell()
+  draw_rnn_cell()
+  draw_cnn_marco_cell()
   draw_cnn_micro_cell()
 
 
