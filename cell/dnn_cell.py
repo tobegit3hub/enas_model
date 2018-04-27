@@ -13,12 +13,9 @@ class DnnNode(cell.EnasNode):
     self.activation_function = activation_function
 
   def __str__(self):
-    instance_string = "index: {}, previous_index: {}, activation_function: {}".format(
+    instance_string = "Index: {}, previous_index: {}, activation_function: {}".format(
         self.index, self.previous_index, self.activation_function)
     return instance_string
-
-  def __repr__(self):
-    return self.__str__()
 
 
 class DnnModel(cell.EnasModel):

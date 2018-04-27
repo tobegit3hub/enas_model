@@ -1,0 +1,30 @@
+{
+  "original": "0, 0 1, 1 0 1, 4 0 1 1, 5 0 1 0 1",
+  "cell_type": "cnn_marco",
+  "nodes": [
+    {
+      "index": 0,
+      "operation": "3_3_convolution"
+    },
+    {
+      "index": 1,
+      "operation": "3_3_convolution",
+      "previous_indexes": "0"
+    },
+    {
+      "index": 2,
+      "operation": "5_5_convolution",
+      "previous_indexes": "1"
+    },
+    {
+      "index": 3,
+      "operation": "3_3_max_polling",
+      "previous_indexes": "1, 2"
+    },
+    {
+      "index": 4,
+      "operation": "5_5_average_polling",
+      "previous_indexes": "1, 3"
+    }
+  ]
+}

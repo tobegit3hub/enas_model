@@ -10,6 +10,13 @@ class EnasNode(object):
   def __init__(self):
     self.index = None
 
+  def __str__(self):
+    instance_string = "Index: {}".format(self.index)
+    return instance_string
+
+  def __repr__(self):
+    return self.__str__()
+
 
 class EnasModel(object):
   def __init__(self):
