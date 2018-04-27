@@ -1,5 +1,6 @@
 {
-  "original": "0, 0 1, 1 0 1, 4 0 1 1, 5 0 1 0 1",
+  "original_arc": "0, 0 1, 1 0 1, 4 0 1 1, 5 0 1 0 1",
+  "original_operations": "0: 3_3_convolution, 1: 5_5_convolution, 2: depthwise_3_3_convolution, 3: depthwise_5_5_convolution, 4: 3_3_max_polling, 5: 3_3_average_polling",
   "cell_type": "cnn_marco",
   "nodes": [
     {

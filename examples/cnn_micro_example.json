@@ -1,0 +1,42 @@
+{
+  "original_arc": "0 2 0 0, 0 4 0 1, 0 4 1 1, 1 0 0 1, 0 2 1 1",
+  "original_operations": "0: identity, 1: 3_3_convolution, 2: 5_5_convolution, 3: 3_3_average_polling, 4: 3_3_max_polling",
+  "cell_type": "cnn_micro",
+  "nodes": [
+    {
+      "index": 2,
+      "previous_index1": 0,
+      "operation1": "5_5_convolution",
+      "previous_index2": 0,
+      "operation2": "identity"
+    },
+    {
+      "index": 3,
+      "previous_index1": 0,
+      "operation1": "3_3_max_polling",
+      "previous_index2": 0,
+      "operation2": "3_3_convolution"
+    },
+    {
+      "index": 4,
+      "previous_index1": 0,
+      "operation1": "3_3_max_polling",
+      "previous_index2": 1,
+      "operation2": "3_3_convolution"
+    },
+    {
+      "index": 5,
+      "previous_index1": 1,
+      "operation1": "identity",
+      "previous_index2": 0,
+      "operation2": "3_3_convolution"
+    },
+    {
+      "index": 6,
+      "previous_index1": 0,
+      "operation1": "5_5_convolution",
+      "previous_index2": 1,
+      "operation2": "3_3_convolution"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 {
-  "original": "0, 0 0, 1 1, 2 1, 2 0, 2 0, 5 1, 1 0, 6 1, 8 1, 8 1, 8 1",
+  "original_arc": "0, 0 0, 1 1, 2 1, 2 0, 2 0, 5 1, 1 0, 6 1, 8 1, 8 1, 8 1",
+  "original_activations": "0: tanh, 1: relu, 2: identity, 3: sigmoid",
   "cell_type": "dnn",
   "nodes": [
     {

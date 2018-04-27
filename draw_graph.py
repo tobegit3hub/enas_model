@@ -9,7 +9,8 @@ from cell import cnn_micro_cell
 def main():
   #draw_dnn_cell()
   #draw_rnn_cell()
-  draw_cnn_marco_cell()
+  #draw_cnn_marco_cell()
+  draw_cnn_micro_cell()
 
 
 def draw_dnn_cell():
@@ -28,6 +29,12 @@ def draw_cnn_marco_cell():
   json_file_path = "./examples/cnn_marco_example.json"
   model = cnn_marco_cell.CnnMarcoModel.load_from_json(json_file_path)
   model.draw_graph("./examples/cnn_marco_example")
+
+
+def draw_cnn_micro_cell():
+  json_file_path = "./examples/cnn_micro_example.json"
+  model = cnn_micro_cell.CnnMicroModel.load_from_json(json_file_path)
+  model.draw_graph("./examples/cnn_micro_example")
 
 
 if __name__ == "__main__":
