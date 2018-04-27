@@ -6,8 +6,9 @@ import logging
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.contrib import rnn
 
-import cells
+from cell import dnn_cell
 
 
 def main():
@@ -20,8 +21,8 @@ class TrainRnnModel(object):
     self.name_variabel_map = {}
 
   def train(self):
-    json_file_path = "./examples/rnn_example.json"
-    rnn_model = cells.RnnModel.load_from_json(json_file_path)
+    json_file_path = "./examples/dnn_example.json"
+    rnn_model = dnn_cell.DnnModel.load_from_json(json_file_path)
 
     print("Build model op")
 

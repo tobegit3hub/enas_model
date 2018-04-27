@@ -1,26 +1,12 @@
-#!/usr/bin/env python
-
 import json
 import os
 
 from graphviz import Digraph
 
-
-class EnasNode(object):
-  def __init__(self):
-    self.index = None
+import cell
 
 
-class EnasModel(object):
-  def __init__(self):
-    self.model_type = None
-    self.nodes = []
-
-  def add_node(self, node):
-    self.nodes.append(node)
-
-
-class RnnNode(EnasNode):
+class DnnNode(cell.EnasNode):
   def __init__(self, index, previous_index=None, activation_function="tanh"):
     self.index = index
     self.previous_index = previous_index
@@ -35,9 +21,9 @@ class RnnNode(EnasNode):
     return self.__str__()
 
 
-class RnnModel(EnasModel):
+class DnnModel(cell.EnasModel):
   def __init__(self):
-    self.model_type = "rnn"
+    self.model_type = "dnn"
     self.nodes = []
 
   @classmethod
@@ -47,23 +33,16 @@ class RnnModel(EnasModel):
     cell_type = model_dict["cell_type"]
     nodes_dict = model_dict["nodes"]
 
-    rnn_model = RnnModel()
+    model = DnnModel()
 
     for node_dict in nodes_dict:
       index = node_dict.get("index", None)
       previous_index = node_dict.get("previous_index", None)
       activation_function = node_dict.get("activation_function", None)
-      rnn_node = RnnNode(index, previous_index, activation_function)
-      rnn_model.add_node(rnn_node)
+      node = DnnNode(index, previous_index, activation_function)
+      model.add_node(node)
 
-    return rnn_model
-
-  def __str__(self):
-    instance_string = "nodes: {}".format(self.nodes)
-    return instance_string
-
-  def __repr__(self):
-    return self.__str__()
+    return model
 
   def draw_graph(self, file_path="graph"):
     dot = Digraph(format="png")
@@ -100,15 +79,3 @@ class RnnModel(EnasModel):
     dot.edge("Output0", "Output1")
 
     dot.render(file_path, view=True)
-
-
-def main():
-  print("Start")
-
-  json_file_path = "./examples/rnn_example.json"
-  rnn_model = RnnModel.load_from_json(json_file_path)
-  rnn_model.draw_graph("rnn_example")
-
-
-if __name__ == "__main__":
-  main()
