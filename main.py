@@ -203,6 +203,53 @@ class TrainRnnModel(object):
       output = tf.nn.relu(output)
     return output
 
+  def lstm_layer(self,
+                 input,
+                 input_shape,
+                 output_shape,
+                 activation_function="tanh",
+                 index=None):
+    RNN_HIDDEN_UNITS = 32
+    RNN_LAYER_NUMBER = 2
+
+    weight = tf.get_variable(
+        "weight_{}".format(index), [RNN_HIDDEN_UNITS, output_shape],
+        dtype=tf.float32,
+        initializer=None)
+    bias = tf.get_variable(
+        "bias_{}".format(index), [output_shape],
+        dtype=tf.float32,
+        initializer=None)
+
+    self.name_variabel_map["weight_{}".format(index)] = weight
+    self.name_variabel_map["bias_{}".format(index)] = bias
+
+    lstm_cell = rnn.BasicLSTMCell(RNN_HIDDEN_UNITS, forget_bias=1.0)
+    lstm_cells = rnn.MultiRNNCell([lstm_cell] * RNN_LAYER_NUMBER)
+
+    # TODO: Not work for construct sequence input
+    #x = tf.transpose(input, [1, 0, 2, 3])
+    # x changes to [32 * BATCH_SIZE, 32 * 3]
+    x = tf.reshape(input, [-1, 784])
+    # x changes to array of 32 * [BATCH_SIZE, 32 * 3]
+    x = tf.split(axis=0, num_or_size_splits=32, value=x)
+
+    outputs, states = rnn.static_rnn(lstm_cells, x, dtype=tf.float32)
+    output = tf.matmul(outputs[-1], weight) + bias
+
+    if activation_function == "tanh":
+      output = tf.nn.tanh(output)
+    elif activation_function == "relu":
+      output = tf.nn.relu(output)
+    elif activation_function == "identity":
+      output = output
+    elif activation_function == "sigmoid":
+      output = tf.nn.sigmoid(output)
+    else:
+      output = tf.nn.relu(output)
+
+    return output
+
 
 if __name__ == "__main__":
   main()

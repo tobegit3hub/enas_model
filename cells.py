@@ -65,7 +65,7 @@ class RnnModel(EnasModel):
   def __repr__(self):
     return self.__str__()
 
-  def draw_graph(self):
+  def draw_graph(self, file_path="graph"):
     dot = Digraph(format="png")
 
     # Add nodes
@@ -99,8 +99,7 @@ class RnnModel(EnasModel):
 
     dot.edge("Output0", "Output1")
 
-    output_image_name = "rnn_example"
-    dot.render(output_image_name, view=True)
+    dot.render(file_path, view=True)
 
 
 def main():
@@ -108,7 +107,7 @@ def main():
 
   json_file_path = "./examples/rnn_example.json"
   rnn_model = RnnModel.load_from_json(json_file_path)
-  rnn_model.draw_graph()
+  rnn_model.draw_graph("rnn_example")
 
 
 if __name__ == "__main__":
