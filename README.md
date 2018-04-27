@@ -4,9 +4,7 @@
 
 [ENAS](https://arxiv.org/abs/1802.03268) is the super efficient algorithm to build deep learning models automatically.
 
-We can use it to generate and select the state-of-the-art DNN/RNN/CNN models easily. It is possible to integrate with any black-box optimization algorithms such as Policy gradient, Bayesian optimization and so on.
-
-Here is the open-source implementation of [Efficient Neural Architecture Search via Parameter Sharing](https://arxiv.org/abs/1802.03268) with the following features.
+It is useful to generate and select the state-of-the-art DNN/RNN/CNN models easily. It can be integrated with any black-box optimization algorithms such as Policy gradient, Bayesian optimization and so on. This open-source implementation of the ENAS paper has the following features.
 
 * Understandable model description with JSON
 * Graph visualization for any generated model
@@ -32,7 +30,7 @@ python ./draw_graph.py
 
 ### RNN/DNN Cell
 
-The example model is in [rnn_example.json](./examples/rnn_example.json).
+The example generated model is in [rnn_example.json](./examples/rnn_example.json).
 
 ```
 {
@@ -106,7 +104,7 @@ The example model is in [rnn_example.json](./examples/rnn_example.json).
 
 ### CNN Micro Cell
 
-The example model is in [cnn_micro_example.json](./examples/cnn_micro_example.json).
+The example generated model is in [cnn_micro_example.json](./examples/cnn_micro_example.json).
 
 ```
 {
@@ -156,7 +154,7 @@ The example model is in [cnn_micro_example.json](./examples/cnn_micro_example.js
 
 ### CNN Marco Cell
 
-The example model is in [cnn_marco_example.json](./examples/cnn_marco_example.json).
+The example generated model is in [cnn_marco_example.json](./examples/cnn_marco_example.json).
 
 ```
 {

@@ -1,4 +1,3 @@
-
 class EnasNode(object):
   def __init__(self):
     self.index = None
