@@ -29,7 +29,7 @@ def main():
   node_number = 5
   # 0 + 1 + 2 + 3 + ... + n = (n**2 + n) / 2
   edge_number = int((node_number**2 + node_number) / 2)
-  reserve_node_edge_number = 1
+  reserve_node_edge_number = 2
 
   hyperparameter_w = tf.get_variable(
       "hyperparameter_w", [edge_number, operation_number],
@@ -86,9 +86,7 @@ def main():
 
     tf.global_variables_initializer().run()
 
-    #writer = tf.summary.FileWriter(FLAGS.output_path, sess.graph)
-
-    for i in range(9380):
+    for i in range(938):
       #batch_xs, batch_ys = mnist.train.next_batch(100)
       batch_xs, batch_ys = mnist.train.next_batch(64)
       _, loss_value = sess.run(
@@ -110,63 +108,142 @@ def main():
         logging.info(
             "hyperparameter_w_value: {}".format(hyperparameter_w_value))
     """
-    Get the top-k edges indexes and operator indexes
-    
     [[0.98046166 0.43295267 0.9859074  0.401366  ]
      [0.49687228 0.9334596  0.43843243 0.32343316]
      [0.0175321  0.45255908 0.177164   0.9900454 ]]
     """
-
     hyperparameter_w_value_list = hyperparameter_w_value.tolist()
-    output_architecture_list = {"cell_type": "dnn", "nodes": []}
-    for node_index in range(node_number):
 
-      output_architecture = {
-          "index": -1,
-          "previous_index": -1,
-          "operation": -1
-      }
+    if reserve_node_edge_number == 1:
+      output_architecture = {"cell_type": "dnn_one_previous", "nodes": []}
+      for node_index in range(node_number):
 
-      if node_index == 0:
-        current_hyperparameter = hyperparameter_w_value_list[0]
+        output_architecture_item = {
+            "index": -1,
+            "previous_index": -1,
+            "operation": -1
+        }
 
-        top_k_max_edge_index = -1
-        current_max_value = max(current_hyperparameter)
-        top_k_max_operator_index = current_hyperparameter.index(
-            current_max_value)
+        if node_index == 0:
+          current_hyperparameter = hyperparameter_w_value_list[0]
 
-      else:
-
-        # 0 + 1 + 2 + 3 + ... + n = n * (n-1) / 2
-        start_index = int(node_index * (node_index - 1) / 2)
-        end_index = int(start_index + node_index)
-
-        top_k_max_value = -1
-        top_k_max_edge_index = -1
-        top_k_max_operator_index = -1
-
-        for i, current_hyperparameter in enumerate(
-            hyperparameter_w_value_list[start_index:end_index]):
-
-          # Example: [0.3108067810535431, 0.8650654554367065, 0.14078158140182495, 0.371991902589798]
+          top_k_max_edge_index = -1
           current_max_value = max(current_hyperparameter)
-          current_max_operator_index = current_hyperparameter.index(
+          top_k_max_operator_index = current_hyperparameter.index(
               current_max_value)
 
-          if current_max_value > top_k_max_value:
-            top_k_max_value = current_max_value
-            top_k_max_edge_index = i
-            top_k_max_operator_index = current_max_operator_index
+        else:
 
-      output_architecture["index"] = node_index
-      output_architecture["previous_index"] = top_k_max_edge_index
-      output_architecture["operation"] = top_k_max_operator_index
-      output_architecture_list["nodes"].append(output_architecture)
+          # 0 + 1 + 2 + 3 + ... + n = n * (n-1) / 2
+          start_index = int(node_index * (node_index - 1) / 2)
+          end_index = int(start_index + node_index)
 
-    logging.info("Final architecture: {}".format(output_architecture_list))
+          top_k_max_value = -1
+          top_k_max_edge_index = -1
+          top_k_max_operator_index = -1
+
+          for i, current_hyperparameter in enumerate(
+              hyperparameter_w_value_list[start_index:end_index]):
+
+            # Example: [0.3108067810535431, 0.8650654554367065, 0.14078158140182495, 0.371991902589798]
+            current_max_value = max(current_hyperparameter)
+            current_max_operator_index = current_hyperparameter.index(
+                current_max_value)
+
+            if current_max_value > top_k_max_value:
+              top_k_max_value = current_max_value
+              top_k_max_edge_index = i
+              top_k_max_operator_index = current_max_operator_index
+
+        output_architecture_item["index"] = node_index
+        output_architecture_item["previous_index"] = top_k_max_edge_index
+        output_architecture_item["operation"] = top_k_max_operator_index
+        output_architecture["nodes"].append(output_architecture_item)
+
+    elif reserve_node_edge_number == 2:
+      output_architecture = {"cell_type": "dnn_two_previous", "nodes": []}
+      for node_index in range(node_number):
+
+        output_architecture_item = {
+            "index": -1,
+            "previous_index0": -1,
+            "operation0": -1,
+            "previous_index1": -1,
+            "operation1": -1
+        }
+
+        if node_index == 0:
+          current_hyperparameter = hyperparameter_w_value_list[0]
+          current_max_value = max(current_hyperparameter)
+          top_k_max_operator_index = current_hyperparameter.index(
+              current_max_value)
+
+          max_edge_index0 = -1
+          max_edge_index1 = -1
+          max_operator_index0 = top_k_max_operator_index
+          max_operator_index1 = -1
+
+        elif node_index == 1:
+          current_hyperparameter0 = hyperparameter_w_value_list[0]
+          current_max_value0 = max(current_hyperparameter0)
+          top_k_max_operator_index0 = current_hyperparameter0.index(
+              current_max_value0)
+
+          current_hyperparameter1 = hyperparameter_w_value_list[1]
+          current_max_value1 = max(current_hyperparameter1)
+          top_k_max_operator_index1 = current_hyperparameter1.index(
+              current_max_value1)
+
+          max_edge_index0 = -1
+          max_edge_index1 = 0
+          max_operator_index0 = top_k_max_operator_index0
+          max_operator_index1 = top_k_max_operator_index1
+
+        else:
+
+          # 0 + 1 + 2 + 3 + ... + n = n * (n-1) / 2
+          start_index = int(node_index * (node_index - 1) / 2)
+          end_index = int(start_index + node_index)
+
+          max_value0 = -1
+          max_value1 = -1
+          max_edge_index0 = -1
+          max_edge_index1 = -1
+          max_operator_index0 = -1
+          max_operator_index1 = -1
+
+          for i, current_hyperparameter in enumerate(
+              hyperparameter_w_value_list[start_index:end_index]):
+
+            # Example: [0.3108067810535431, 0.8650654554367065, 0.14078158140182495, 0.371991902589798]
+            current_max_value = max(current_hyperparameter)
+            current_max_operator_index = current_hyperparameter.index(
+                current_max_value)
+
+            if current_max_value > max_value0:
+              max_value0 = current_max_value
+              max_edge_index0 = i
+              max_operator_index0 = current_max_operator_index
+            elif current_max_value > max_value1:
+              max_value1 = current_max_value
+              max_edge_index1 = i
+              max_operator_index1 = current_max_operator_index
+
+        output_architecture_item["index"] = node_index
+        output_architecture_item["previous_index0"] = max_edge_index0
+        output_architecture_item["operation0"] = max_operator_index0
+        output_architecture_item["previous_index1"] = max_edge_index1
+        output_architecture_item["operation1"] = max_operator_index1
+        output_architecture["nodes"].append(output_architecture_item)
+
+    else:
+      logging.error("Unsupported reserve_node_edge_number: {}".format(
+          reserve_node_edge_number))
+
+    logging.info("Final architecture: {}".format(output_architecture))
     architecture_json_filename = "./dnas_arch.json"
     with open(architecture_json_filename, "w") as f:
-      json.dump(output_architecture_list, f)
+      json.dump(output_architecture, f)
 
 
 if __name__ == "__main__":
