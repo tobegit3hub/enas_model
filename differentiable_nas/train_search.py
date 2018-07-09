@@ -19,6 +19,7 @@ def main():
 
   mnist = input_data.read_data_sets("/tmp/tensorflow/mnist/input_data")
 
+  epoch_number = 3
   input_size = 784
   output_size = 10
 
@@ -27,10 +28,11 @@ def main():
   operation_number = 4
 
   node_number = 5
-  # 0 + 1 + 2 + 3 + ... + n = (n**2 + n) / 2
-  edge_number = int((node_number**2 + node_number) / 2)
+  # 0 + 1 + 2 + 3 + ... + n = (n * (n -1) / 2
+  edge_number = int(node_number * (node_number - 1) / 2)
   reserve_node_edge_number = 2
 
+  # The new hyperparameters as parameters for representation of activations
   hyperparameter_w = tf.get_variable(
       "hyperparameter_w", [edge_number, operation_number],
       dtype=tf.float32,
@@ -38,46 +40,70 @@ def main():
 
   x = tf.placeholder(tf.float32, [None, 784])
 
-  for i in range(node_number):
-    if i == 0:
+  # The output of each node which aggregates all possible inputs and before activation
+  node_output_array = [0.0 for i in range(node_number)]
+
+  for j in range(node_number):
+    if j == 0:
       weight = tf.get_variable(
-          "w_{}".format(i), [input_size, dnn_hidden_unit],
+          "w_input", [input_size, dnn_hidden_unit],
           dtype=tf.float32,
           initializer=tf.truncated_normal_initializer)
       bias = tf.get_variable(
-          "b_{}".format(i), [dnn_hidden_unit],
+          "b_input", [dnn_hidden_unit],
           dtype=tf.float32,
           initializer=tf.truncated_normal_initializer)
       layer = tf.matmul(x, weight) + bias
+      node_output_array[j] = layer
     else:
-      weight = tf.get_variable(
-          "w_{}".format(i), [dnn_hidden_unit, dnn_hidden_unit],
-          dtype=tf.float32,
-          initializer=tf.truncated_normal_initializer)
-      bias = tf.get_variable(
-          "b_{}".format(i), [dnn_hidden_unit],
-          dtype=tf.float32,
-          initializer=tf.truncated_normal_initializer)
-      layer = tf.matmul(layer, weight) + bias
 
-    #layer = tf.nn.relu(layer)
-    current_hyperparameter_w = hyperparameter_w[0]
-    current_hyperparameter_w_softmax = tf.nn.softmax(current_hyperparameter_w)
-    layer = current_hyperparameter_w_softmax[0] * tf.nn.tanh(
-        layer) + current_hyperparameter_w_softmax[1] * tf.nn.tanh(
-            layer) + current_hyperparameter_w_softmax[2] * tf.nn.sigmoid(
-                layer) + current_hyperparameter_w_softmax[3] * 0
+      # The output of this node which aggregates all possible inputs
+      node_output = 0.0
 
-  output_weight = tf.get_variable(
-      "w_output", [dnn_hidden_unit, output_size],
-      dtype=tf.float32,
-      initializer=tf.truncated_normal_initializer)
-  output_b = tf.get_variable(
-      "b_output", [output_size],
-      dtype=tf.float32,
-      initializer=tf.truncated_normal_initializer)
-  y = tf.matmul(layer, output_weight) + output_b
+      for i in range(j):
+        # node i -> node j, w01 means node 0 -> node 1
+        weight = tf.get_variable(
+            "w_{}_{}".format(i, j), [dnn_hidden_unit, dnn_hidden_unit],
+            dtype=tf.float32,
+            initializer=tf.truncated_normal_initializer)
+        bias = tf.get_variable(
+            "b_{}_{}".format(i, j), [dnn_hidden_unit],
+            dtype=tf.float32,
+            initializer=tf.truncated_normal_initializer)
 
+        layer = node_output_array[i]
+        # Get the hyperparameter_w item by i and j
+        w_index = int(j * (j - 1) / 2) + i
+        current_hyperparameter_w = hyperparameter_w[w_index]
+        current_hyperparameter_w_softmax = tf.nn.softmax(
+            current_hyperparameter_w)
+        node_output_array[i] = current_hyperparameter_w_softmax[0] * tf.nn.tanh(
+            layer) + current_hyperparameter_w_softmax[1] * tf.nn.tanh(
+                layer) + current_hyperparameter_w_softmax[2] * tf.nn.sigmoid(
+                    layer) + current_hyperparameter_w_softmax[3] * 0
+
+        layer = tf.matmul(layer, weight) + bias
+        node_output += layer
+
+      node_output_array[j] = node_output
+
+  # Aggreate all nodes's outputs as the model output
+  model_output = 0.0
+  for i in range(node_number):
+
+    output_weight = tf.get_variable(
+        "w_output_{}".format(i), [dnn_hidden_unit, output_size],
+        dtype=tf.float32,
+        initializer=tf.truncated_normal_initializer)
+    output_b = tf.get_variable(
+        "b_output_{}".format(i), [output_size],
+        dtype=tf.float32,
+        initializer=tf.truncated_normal_initializer)
+    layer = node_output_array[i]
+    layer = tf.matmul(layer, output_weight) + output_b
+    model_output += layer
+
+  y = node_output
   y_ = tf.placeholder(tf.int64, [None])
   cross_entropy = tf.losses.sparse_softmax_cross_entropy(labels=y_, logits=y)
   train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
@@ -86,7 +112,7 @@ def main():
 
     tf.global_variables_initializer().run()
 
-    for i in range(938):
+    for i in range(938 * epoch_number):
       #batch_xs, batch_ys = mnist.train.next_batch(100)
       batch_xs, batch_ys = mnist.train.next_batch(64)
       _, loss_value = sess.run(

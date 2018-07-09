@@ -6,7 +6,7 @@ from graphviz import Digraph
 
 def main():
   json_filename = "./dnas_arch.json"
-  graph_filename = "./dnas_arch.png"
+  graph_filename = "./dnas_arch"
   draw_graph(json_filename, graph_filename)
 
 
