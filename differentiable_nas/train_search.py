@@ -19,7 +19,7 @@ def main():
 
   mnist = input_data.read_data_sets("/tmp/tensorflow/mnist/input_data")
 
-  epoch_number = 3
+  epoch_number = 1
   input_size = 784
   output_size = 10
 
@@ -103,7 +103,7 @@ def main():
     layer = tf.matmul(layer, output_weight) + output_b
     model_output += layer
 
-  y = node_output
+  y = model_output
   y_ = tf.placeholder(tf.int64, [None])
   cross_entropy = tf.losses.sparse_softmax_cross_entropy(labels=y_, logits=y)
   train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
